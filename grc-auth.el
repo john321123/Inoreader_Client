@@ -48,11 +48,14 @@
   :type 'file)
 
 (defvar grc-auth-authorization-code-url
-  (concat "https://accounts.google.com/o/oauth2/auth?"
-          "client_id=%s"
-          "&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
-          "&scope=http://www.google.com/reader/api"
-          "&response_type=code"))
+  (concat "https://www.inoreader.com/oauth2/auth?"
+	  "client_id=%s" 
+          "&redirect_uri=urn:ietf:wg:oauth:2.0:oob" 
+	  "&redirect_uri=http://localhost"
+	  "&response_type=code"
+	  "&scope=read+write"
+	  "&state=500"
+	  ))
 
 (defvar grc-auth-access-token nil)
 (defvar grc-auth-refresh-token nil)
@@ -113,11 +116,11 @@
   (grc-auth-verify-config)
   (let* ((auth-code (grc-auth-get-auth-code))
          (resp (grc-req-post-request
-                "https://accounts.google.com/o/oauth2/token"
+                "https://www.inoreader.com/oauth2/token?"
                 `(("client_id"     . ,grc-auth-client-id)
                   ("client_secret" . ,grc-auth-client-secret)
                   ("code"          . ,auth-code)
-                  ("redirect_uri"  . "urn:ietf:wg:oauth:2.0:oob")
+                  ("redirect_uri"  . "http://localhost") 
                   ("grant_type"    . "authorization_code"))
                 t)))
     ;; TODO: handle errors
@@ -157,7 +160,7 @@
         grc-auth-access-token
       (grc-auth-set-access-token
        (grc-req-post-request
-        "https://accounts.google.com/o/oauth2/token"
+        "https://www.inoreader.com/oauth2/token"
         (grc-req-format-params
          `(("client_id"     . ,grc-auth-client-id)
            ("client_secret" . ,grc-auth-client-secret)

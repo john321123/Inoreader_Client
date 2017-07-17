@@ -36,11 +36,11 @@
   "Arbitrary client string for various reqeuests")
 
 (defvar grc-auth-header-format
-  "--header 'Authorization: OAuth %s'"
+  "--header 'Authorization: Bearer %s'"
   "HTTP authorization headers to send.")
 
 (defvar grc-req-base-url
-  "http://www.google.com/reader/"
+  "https://www.inoreader.com/reader/"
   "Base URL for Google Reader  API.")
 
 (defvar grc-req-subscribed-feed-list-url
@@ -169,7 +169,7 @@
   (grc-req-do-request "POST" endpoint params no-auth raw-response))
 
 (defvar grc-req-stream-url-pattern
-  "http://www.google.com/reader/api/0/stream/contents/%s")
+  "https://www.inoreader.com/reader/api/0/stream/contents/%s")
 
 (defun grc-req-stream-url (&optional state)
   "Get the url for Google Reader entries, optionally limited to a specified
@@ -244,7 +244,7 @@
 
 (defun grc-req-mark-all-read (&optional src)
   "Mark all items for 'src' as read"
-  (let ((url "http://www.google.com/reader/api/0/mark-all-as-read")
+  (let ((url "https://www.inoreader.com/reader/api/0/mark-all-as-read")
         (params `(("s"  . ,(or src "user/-/state/com.google/reading-list"))
                   ("ts" . ,(floor (* 1000000 (float-time))))
                   ("T"  . ,(grc-auth-get-action-token)))))

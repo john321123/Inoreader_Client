@@ -50,7 +50,6 @@
 (defvar grc-auth-authorization-code-url
   (concat "https://www.inoreader.com/oauth2/auth?"
 	  "client_id=%s" 
-          "&redirect_uri=urn:ietf:wg:oauth:2.0:oob" 
 	  "&redirect_uri=http://localhost"
 	  "&response_type=code"
 	  "&scope=read+write"

@@ -216,8 +216,7 @@
   (let ((params `(("a" . "user/-/state/com.google/kept-unread")
                   ("r" . "user/-/state/com.google/read")
                   ("s" . ,feed)
-                  ("i" . ,id)
-                  ("T" . ,(grc-auth-get-action-token)))))
+                  ("i" . ,id))))
     (grc-req-with-response
       (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
 
@@ -227,8 +226,7 @@
   (let ((params `(("r" . "user/-/state/com.google/kept-unread")
                   ("a" . "user/-/state/com.google/read")
                   ("s" . ,feed)
-                  ("i" . ,id)
-                  ("T" . ,(grc-auth-get-action-token)))))
+                  ("i" . ,id))))
     (grc-req-with-response
       (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
 
@@ -237,8 +235,7 @@
   (let ((params
          `((,(if remove-p "r" "a") . ,(concat "user/-/state/com.google/" tag))
            ("s" . ,feed)
-           ("i" . ,id)
-           ("T" . ,(grc-auth-get-action-token)))))
+           ("i" . ,id))))
     (grc-req-with-response
       (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
 
@@ -246,8 +243,7 @@
   "Mark all items for 'src' as read"
   (let ((url "https://www.inoreader.com/reader/api/0/mark-all-as-read")
         (params `(("s"  . ,(or src "user/-/state/com.google/reading-list"))
-                  ("ts" . ,(floor (* 1000000 (float-time))))
-                  ("T"  . ,(grc-auth-get-action-token)))))
+                  ("ts" . ,(floor (* 1000000 (float-time)))))))
     (grc-req-with-response (grc-req-curl-command "POST" url params) _ t)))
 
 (defun grc-req-subscriptions ()

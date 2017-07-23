@@ -43,15 +43,65 @@
   "https://www.inoreader.com/reader/"
   "Base URL for Google Reader  API.")
 
+(defvar grc-req-add-subscription-url
+  (concat grc-req-base-url
+	  "api/0/subscription/quickadd")
+  "URL for adding a feed")
+
+(defvar grc-req-edit-subscription-url
+  (concat grc-req-base-url
+	  "api/0/subscription/edit")
+  "URL for editing a subscription")
+
+(defvar grc-req-unread-count-url
+  (concat grc-req-base-url
+	  "api/0/unread-count")
+  "URL for unread-count")
+
 (defvar grc-req-subscribed-feed-list-url
   (concat grc-req-base-url
           "api/0/subscription/list")
   "URL for retrieving list of subscribed feeds.")
 
+(defvar grc-req-folders-and-tags-list-url
+  (concat grc-req-base-url
+          "api/0/tag/list")
+  "URL for retrieving list of folders and tags.")
+
+(defvar grc-req-stream-contents-url
+  (concat grc-req-base-url
+          "api/0/stream/contents")
+  "URL for retrieving stream contents.")
+
+(defvar grc-req-items-ids-url
+  (concat grc-req-base-url
+          "api/0/stream/items/ids")
+  "URL for retrieving item ids.")
+
+(defvar grc-req-preference-stream-list-url
+  (concat grc-req-base-url
+          "api/0/preference/stream/list")
+  "URL for retrieving preference stream.")
+
+(defvar grc-req-preference-stream-set-url
+  (concat grc-req-base-url
+          "api/0/preference/stream/set")
+  "URL for setting a preference stream")
+
 (defvar grc-req-preference-set-url
   (concat grc-req-base-url
           "api/0/preference/set")
   "URL for setting a preference")
+
+(defvar grc-req-rename-tag-url
+  (concat grc-req-base-url
+          "api/0/rename-tag")
+  "URL for renameing a tag")
+
+(defvar grc-req-delete-tag-url
+  (concat grc-req-base-url
+          "api/0/disable-tag")
+  "URL for deleteing a tag")
 
 (defvar grc-req-edit-tag-url
   (concat grc-req-base-url
@@ -161,18 +211,18 @@
                endpoint params command raw-resp)))))
 
 (defun grc-req-get-request (endpoint &optional params no-auth raw-response)
-  "Makes a GET request to Google"
+  "Makes a GET request to Inoreader"
   (grc-req-do-request "GET" endpoint params no-auth raw-response))
 
 (defun grc-req-post-request (endpoint params &optional no-auth raw-response)
-  "Makes a POST request to Google"
+  "Makes a POST request to Inoreader"
   (grc-req-do-request "POST" endpoint params no-auth raw-response))
 
 (defvar grc-req-stream-url-pattern
   "https://www.inoreader.com/reader/api/0/stream/contents/%s")
 
 (defun grc-req-stream-url (&optional state)
-  "Get the url for Google Reader entries, optionally limited to a specified
+  "Get the url for Inoreader Reader entries, optionally limited to a specified
   state- e.g., kept-unread"
   (let ((stream-state (if (null state)
                           ""
@@ -210,25 +260,23 @@
      (grc-req-stream-url state)
      (grc-req-format-params params))))
 
-(defun grc-req-mark-kept-unread (id feed)
-  "Send a request to mark an entry as kept-unread.  Will also remove the read
-  category"
-  (let ((params `(("a" . "user/-/state/com.google/kept-unread")
-                  ("r" . "user/-/state/com.google/read")
-                  ("s" . ,feed)
-                  ("i" . ,id))))
-    (grc-req-with-response
-      (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
+;; (defun grc-req-mark-kept-unread (id feed)
+;;  "Send a request to mark an entry as kept-unread.  Will also remove the read
+;;  category"
+;;  (let ((params `(("r" . "user/-/state/com.google/read")
+;;		  ("s" . ,feed)
+;;		  ("i" . ,id))))
+;;    (grc-req-with-response
+;;      (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
 
-(defun grc-req-mark-read (id feed)
-  "Send a request to mark an entry as read.  Will also remove the kept-unread
-  category"
-  (let ((params `(("r" . "user/-/state/com.google/kept-unread")
-                  ("a" . "user/-/state/com.google/read")
-                  ("s" . ,feed)
-                  ("i" . ,id))))
-    (grc-req-with-response
-      (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
+;; (defun grc-req-mark-read (id feed)
+;;  "Send a request to mark an entry as read.  Will also remove the kept-unread
+;;  category"
+;;  (let ((params `(("a" . "user/-/state/com.google/read")
+;;		  ("s" . ,feed)
+;;		  ("i" . ,id))))
+;;    (grc-req-with-response
+;;      (grc-req-curl-command "POST" grc-req-edit-tag-url params) _ t)))
 
 (defun grc-req-edit-tag (id feed tag remove-p)
   "Send a request to remove or add a tag (category/label)"

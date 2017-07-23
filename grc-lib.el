@@ -93,7 +93,7 @@
   values to strings before sorting.
 
   reverse-result will reverse the list prior to returning
-  secondary-key can be used to specify another field in the alist to sort by in
+x  secondary-key can be used to specify another field in the alist to sort by in
   the case that two values are identical for the primary sort.  The order is
   random in that case, otherwise."
   (let ((sorted

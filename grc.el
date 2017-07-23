@@ -45,7 +45,7 @@
 (require 'grc-show)
 
 
-(defgroup grc nil "Google Reader Client for Emacs")
+(defgroup grc nil "Inoreader Reader Client for Emacs")
 
 (defgroup grc-faces
   nil "Group for grc related faces"
@@ -65,30 +65,29 @@
   :type 'integer
   :group 'grc)
 
-(defcustom grc-instapaper-username ""
-  ""
-  :group 'grc
-  :type 'string)
 
-(defcustom grc-instapaper-password ""
-  ""
-  :group 'grc
-  :type 'string)
+;; (defcustom grc-instapaper-username ""
+;;  ""
+;;  :group 'grc
+;;  :type 'string)
 
+;; (defcustom grc-instapaper-password ""
+;;  ""
+;;  :group 'grc
+;;  :type 'string)
+
+;; TODO: Not all of categories are used for inoreader.
 (defvar grc-google-categories
   '(("fresh"                      . "Fresh")
-    ("kept-unread"                . "Kept Unread")
     ("read"                       . "Read")
     ("reading-list"               . "Reading List")
     ("starred"                    . "Starred")
-    ("tracking-body-link-used"    . "Tracking Body Link Used")
-    ("tracking-emailed"           . "Tracking Email")
-    ("tracking-item-link-used"    . "Tracking Item Link Used")
-    ("tracking-kept-unread"       . "Tracking Kept Unread")
-    ("tracking-mobile-read"       . "Tracking Mobile Read"))
+    ("broadcast"                  . "Broadcast")
+    ("like"                       . "Like")
+    ("kept-unread"                . "Kept unread"))
   "list of the categories that google adds to entries")
 
-(defvar grc-state-alist '("Kept Unread" "Read" "Reading List" "Starred"))
+(defvar grc-state-alist '("Read" "Reading List" "Starred"))
 (defvar grc-current-state "reading-list")
 
 (defvar grc-entry-cache nil)
@@ -245,9 +244,7 @@
                (reduce (lambda (categories c)
                          (remove c categories))
                        '("broadcast" "fresh" "reading-list"
-                         "tracking-body-link-used" "tracking-emailed"
-                         "tracking-item-link-used" "tracking-kept-unread"
-                         "tracking-mobile-read")
+			 )
                        :initial-value cats)
                " ")))
 
@@ -365,35 +362,15 @@
                              err))))))))
 
 (defun grc-mark-read (entry)
-  "Marks the entry as read on Google Reader"
-  (let* ((cats (aget entry 'categories))
-         (read (member "read" cats))
-         (kept-unread (member "kept-unread" cats)))
-    (if (not read)
-        (progn
-          (grc-req-mark-read (aget entry 'id) (aget entry 'src-id))
-          (let ((entry (grc-add-category entry "read")))
-            (if kept-unread
-                (grc-remove-category entry "kept-unread")
-              entry)))
-      entry)))
+  "Marks the entry as read on Inoreader Reader"
+  (funcall (grc-mark-fn "read") entry))
 
 (defun grc-mark-kept-unread (entry)
-  "Marks the entry as kept unread on Google Reader"
-  (let* ((cats (aget entry 'categories))
-         (read (member "read" cats))
-         (kept-unread (member "kept-unread" cats)))
-    (if (not kept-unread)
-        (progn
-          (grc-req-mark-kept-unread (aget entry 'id) (aget entry 'src-id))
-          (let ((entry (grc-add-category entry "kept-unread")))
-            (if read
-                (grc-remove-category entry "read")
-              entry)))
-      entry)))
+  "Marks the entry as kept unread on Inoreader Reader"
+  (funcall (grc-mark-fn "read") entry t))  
 
 (defun grc-mark-starred (entry &optional remove)
-  "Marks the entry as starred on Google Reader"
+  "Marks the entry as starred on Inoreader Reader"
   (funcall (grc-mark-fn "starred") entry remove))
 
 (defun grc-view-external (entry)
@@ -406,18 +383,18 @@
           (grc-mark-read entry))
       (message "Unable to view this entry"))))
 
-(defun grc-send-to-instapaper (entry)
-  (let* ((params (grc-req-format-params
-                  `(("username" . ,grc-instapaper-username)
-                    ("password" . ,grc-instapaper-password)
-                    ("url"      . ,(aget entry 'link t)))))
-         (command (format "%s %s -X POST -d \"%s\" '%s' "
-                          grc-curl-program
-                          grc-curl-options
-                          params
-                          "https://www.instapaper.com/api/add")))
-    (grc-req-with-response command _
-      (message "Sent to Instapaper"))))
+;; (defun grc-send-to-instapaper (entry)
+;;   (let* ((params (grc-req-format-params
+;; 		  `(("username" . ,grc-instapaper-username)
+;;		    ("password" . ,grc-instapaper-password)
+;;		    ("url"      . ,(aget entry 'link t)))))
+;;	 (command (format "%s %s -X POST -d \"%s\" '%s' "
+;;			  grc-curl-program
+;;			  grc-curl-options
+;;			  params
+;;			  "https://www.instapaper.com/api/add")))
+;;  (grc-req-with-response command
+;;  (message "Sent to Instapaper"))))
 
 (provide 'grc)
 ;;; grc.el ends here

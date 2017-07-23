@@ -115,7 +115,7 @@
   (grc-auth-verify-config)
   (let* ((auth-code (grc-auth-get-auth-code))
          (resp (grc-req-post-request
-                "https://www.inoreader.com/oauth2/token?"
+                "https://www.inoreader.com/oauth2/token"
                 `(("client_id"     . ,grc-auth-client-id)
                   ("client_secret" . ,grc-auth-client-secret)
                   ("code"          . ,auth-code)
